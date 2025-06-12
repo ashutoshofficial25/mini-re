@@ -20,7 +20,7 @@ interface Role {
   updatedAt: string;
 }
 
-interface User {
+export interface User {
   _id: string;
   email: string;
   mobile: string;

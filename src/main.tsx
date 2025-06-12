@@ -6,6 +6,7 @@ import App from './app';
 import { routesSection } from './routes/sections';
 import { ErrorBoundary } from './routes/components';
 import { AuthProvider } from './context/AuthContext';
+import { Toaster } from 'sonner';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +27,7 @@ const root = createRoot(document.getElementById('root')!);
 root.render(
   <StrictMode>
     <AuthProvider>
+      <Toaster richColors position="top-right" />
       <RouterProvider router={router} />
     </AuthProvider>
   </StrictMode>
