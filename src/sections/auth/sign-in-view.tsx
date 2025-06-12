@@ -12,74 +12,36 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
+import { useAuth } from 'src/context/AuthContext';
+import axiosInstance from 'src/api/axios';
+import { useFormik } from 'formik';
 
 // ----------------------------------------------------------------------
 
 export function SignInView() {
   const router = useRouter();
+  const { login } = useAuth();
+
+  const { values, isSubmitting, errors, touched, handleSubmit, handleChange } = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    onSubmit: async (values) => {
+      try {
+        const res = await axiosInstance.post('/auth/login', { ...values, type: 'partner' });
+
+        if (res.data.data) {
+          console.log('log;', res.data);
+          login(res.data?.data?.accessToken);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
 
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleSignIn = useCallback(() => {
-    router.push('/');
-  }, [router]);
-
-  const renderForm = (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'flex-end',
-        flexDirection: 'column',
-      }}
-    >
-      <TextField
-        fullWidth
-        name="email"
-        label="Email address"
-        defaultValue="hello@gmail.com"
-        sx={{ mb: 3 }}
-        slotProps={{
-          inputLabel: { shrink: true },
-        }}
-      />
-
-      <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
-        Forgot password?
-      </Link>
-
-      <TextField
-        fullWidth
-        name="password"
-        label="Password"
-        defaultValue="@demo1234"
-        type={showPassword ? 'text' : 'password'}
-        slotProps={{
-          inputLabel: { shrink: true },
-          input: {
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          },
-        }}
-        sx={{ mb: 3 }}
-      />
-
-      <Button
-        fullWidth
-        size="large"
-        type="submit"
-        color="inherit"
-        variant="contained"
-        onClick={handleSignIn}
-      >
-        Sign in
-      </Button>
-    </Box>
-  );
 
   return (
     <>
@@ -99,37 +61,68 @@ export function SignInView() {
             color: 'text.secondary',
           }}
         >
-          Don’t have an account?
-          <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-            Get started
-          </Link>
+          Welcome to examly partner
         </Typography>
       </Box>
-      {renderForm}
-      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
-        <Typography
-          variant="overline"
-          sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
+      <form onSubmit={handleSubmit}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            flexDirection: 'column',
+          }}
         >
-          OR
-        </Typography>
-      </Divider>
-      <Box
-        sx={{
-          gap: 1,
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:google" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:github" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify width={22} icon="socials:twitter" />
-        </IconButton>
+          <TextField
+            fullWidth
+            name="email"
+            label="Email address"
+            onChange={handleChange}
+            value={values.email}
+            sx={{ mb: 3 }}
+            slotProps={{
+              inputLabel: { shrink: true },
+            }}
+          />
+
+          <TextField
+            fullWidth
+            name="password"
+            label="Password"
+            onChange={handleChange}
+            value={values.password}
+            type={showPassword ? 'text' : 'password'}
+            slotProps={{
+              inputLabel: { shrink: true },
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+            sx={{ mb: 3 }}
+          />
+
+          <Button
+            fullWidth
+            size="large"
+            type="submit"
+            color="inherit"
+            variant="contained"
+            loading={isSubmitting}
+          >
+            Sign in
+          </Button>
+        </Box>
+      </form>
+
+      <Box textAlign="right" mt={2}>
+        <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
+          Forgot password?
+        </Link>
       </Box>
     </>
   );
