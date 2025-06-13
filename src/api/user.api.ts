@@ -5,7 +5,7 @@ export class UserApi {
   private readonly baseUrl = '/partner/user';
 
   async getUsers(params?: Record<string, any>, showErrorToast = false, showSuccessToast = false) {
-    const data = await apiClient<User>(
+    const data = await apiClient(
       {
         method: 'GET',
         url: this.baseUrl,
@@ -16,7 +16,7 @@ export class UserApi {
         showSuccessToast,
       }
     );
-    return data || [];
+    return data;
   }
 
   async getUserById(id: string, showErrorToast = false, showSuccessToast = false) {

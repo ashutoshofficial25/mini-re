@@ -17,6 +17,9 @@ import AuthGuard from 'src/guards/AuthGuard';
 export const DashboardPage = lazy(() => import('src/pages/dashboard'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
+export const RolesPage = lazy(() => import('src/pages/roles'));
+export const DepartmentPage = lazy(() => import('src/pages/department'));
+
 export const SignInPage = lazy(() => import('src/pages/auth/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
@@ -55,6 +58,8 @@ export const routesSection: RouteObject[] = [
     children: [
       { index: true, element: <DashboardPage /> },
       { path: 'user', element: <UserPage /> },
+      { path: 'roles', element: <RolesPage /> },
+      { path: 'department', element: <DepartmentPage /> },
       { path: 'products', element: <ProductsPage /> },
       { path: 'blog', element: <BlogPage /> },
     ],

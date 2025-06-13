@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -26,13 +26,35 @@ import type { UserProps } from '../user-table-row';
 
 // ----------------------------------------------------------------------
 
+import { userApi } from 'src/api/user.api';
+
 export function UserView() {
   const table = useTable();
-
   const [filterName, setFilterName] = useState('');
+  const [users, setUsers] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const dataFiltered: UserProps[] = applyFilter({
-    inputData: _users,
+  const fetchUsers = useCallback(async () => {
+    const response = await userApi.getUsers({
+      page: table.page,
+      limit: table.rowsPerPage,
+      search: filterName,
+      sortBy: table.orderBy,
+      sortOrder: table.order,
+    });
+
+    if (response?.data) {
+      setUsers((response?.data as any)?.data ?? []);
+      setTotalCount((response.data as any)?.count);
+    }
+  }, [table.page, table.rowsPerPage, filterName, table.orderBy, table.order]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const dataFiltered: any[] = applyFilter({
+    inputData: users,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
@@ -87,7 +109,7 @@ export function UserView() {
                 }
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
+                  { id: 'email', label: 'Email' },
                   { id: 'role', label: 'Role' },
                   { id: 'isVerified', label: 'Verified', align: 'center' },
                   { id: 'status', label: 'Status' },
@@ -102,10 +124,10 @@ export function UserView() {
                   )
                   .map((row) => (
                     <UserTableRow
-                      key={row.id}
+                      key={row._id}
                       row={row}
-                      selected={table.selected.includes(row.id)}
-                      onSelectRow={() => table.onSelectRow(row.id)}
+                      selected={table.selected.includes(row._id)}
+                      onSelectRow={() => table.onSelectRow(row._id)}
                     />
                   ))}
 
@@ -123,7 +145,7 @@ export function UserView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={_users.length}
+          count={totalCount}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}

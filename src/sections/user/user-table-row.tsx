@@ -17,8 +17,13 @@ import { Iconify } from 'src/components/iconify';
 
 export type UserProps = {
   id: string;
-  name: string;
-  role: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobile: string;
+  role: {
+    name: string;
+  };
   status: string;
   company: string;
   avatarUrl: string;
@@ -57,14 +62,14 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
               alignItems: 'center',
             }}
           >
-            <Avatar alt={row.name} src={row.avatarUrl} />
-            {row.name}
+            <Avatar alt={row.firstName} src={row.avatarUrl} />
+            {row?.firstName} {row?.lastName}
           </Box>
         </TableCell>
 
-        <TableCell>{row.company}</TableCell>
+        <TableCell>{row?.email}</TableCell>
 
-        <TableCell>{row.role}</TableCell>
+        <TableCell>{row.role?.name}</TableCell>
 
         <TableCell align="center">
           {row.isVerified ? (

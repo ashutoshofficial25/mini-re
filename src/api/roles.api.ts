@@ -16,7 +16,7 @@ export class RolesApi {
         showSuccessToast,
       }
     );
-    return data || [];
+    return data;
   }
 
   async getRoleById(id: string, showErrorToast = false, showSuccessToast = false) {
